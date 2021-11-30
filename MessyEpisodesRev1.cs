@@ -39,28 +39,28 @@ namespace MessyEpisodes
             string SQL = @"
         SELECT * 
 FROM OPENQUERY(HSSDPRD, 
-' SELECT 
+' SELECT TOP 10000
 	APPT_PAPMI_DR->PAPMI_No as URN
-    , APPT_PAPMI_DR->PAPMI_Deceased_Date as DeceasedDate
-	, APPT_PAPMI_DR->PAPMI_Name as PatientSurname
-	, APPT_PAPMI_DR->PAPMI_Name2 as PatientFirstName
-	, APPT_PAPMI_DR->PAPMI_RowId->PAPER_Sex_DR->CTSEX_Desc as Gender
-	, APPT_PAPMI_DR->PAPMI_RowId->PAPER_Dob as PaitentDOB
-	, APPT_PAPMI_DR->PAPMI_PAPER_DR->PAPER_StName as AddressFirstLine
-	, APPT_PAPMI_DR->PAPMI_PAPER_DR->PAPER_ForeignAddress as AddressSecondLine
-	, APPT_PAPMI_DR->PAPMI_RowId->PAPER_Zip_DR->CTZIP_Code as PostCode
+    --, APPT_PAPMI_DR->PAPMI_Deceased_Date as DeceasedDate
+	--, APPT_PAPMI_DR->PAPMI_Name as PatientSurname
+	--, APPT_PAPMI_DR->PAPMI_Name2 as PatientFirstName
+	--, APPT_PAPMI_DR->PAPMI_RowId->PAPER_Sex_DR->CTSEX_Desc as Gender
+	--, APPT_PAPMI_DR->PAPMI_RowId->PAPER_Dob as PaitentDOB
+	--, APPT_PAPMI_DR->PAPMI_PAPER_DR->PAPER_StName as AddressFirstLine
+	--, APPT_PAPMI_DR->PAPMI_PAPER_DR->PAPER_ForeignAddress as AddressSecondLine
+	--, APPT_PAPMI_DR->PAPMI_RowId->PAPER_Zip_DR->CTZIP_Code as PostCode
 	, APPT_Adm_DR->PAADM_ADMNo as EpisodeNumber
-    , APPT_Adm_DR->PAADM_AdmDocCodeDR->CTPCP_Desc as EpisodeCareProvider
+    --, APPT_Adm_DR->PAADM_AdmDocCodeDR->CTPCP_Desc as EpisodeCareProvider
     , APPT_Adm_DR->PAADM_DepCode_DR->CTLOC_Desc as EpisodeSpecialty
-	, APPT_Adm_DR->PAADM_VisitStatus as EpisodeVisitStatus
+	--, APPT_Adm_DR->PAADM_VisitStatus as EpisodeVisitStatus
     , APPT_Adm_DR->PAADM_RefStat_DR->RST_Desc as EpisodeReferralStatus
 	, APPT_AS_ParRef->AS_Date as AppointmentDate
 	, APPT_AS_ParRef->AS_SessStartTime as AppointmentTime
-	, APPT_AS_ParRef->AS_RES_ParRef->RES_Desc As AppointmentCareProvider
+	--, APPT_AS_ParRef->AS_RES_ParRef->RES_Desc As AppointmentCareProvider
     , APPT_AS_ParRef->AS_RES_ParRef->RES_CTLOC_DR->CTLOC_Desc as AppointmentLocationDescription
-    , APPT_Adm_DR->PAADM_AdmDocCodeDR->CTPCP_CPGroup_DR->CPG_Desc as CareProviderGroup
-    , APPT_Status as AppointmentReferralStatus
-	, APPT_Outcome_DR->OUTC_Desc as AppointmentOutcome
+    --, APPT_Adm_DR->PAADM_AdmDocCodeDR->CTPCP_CPGroup_DR->CPG_Desc as CareProviderGroup
+    --, APPT_Status as AppointmentReferralStatus
+	--, APPT_Outcome_DR->OUTC_Desc as AppointmentOutcome
 FROM    RB_Appointment
 --WHERE APPT_AS_ParRef->AS_Date >= ''2021-10-07'' 
 WHERE APPT_PAPMI_DR->PAPMI_Name NOT LIKE ''zz%''
@@ -79,25 +79,25 @@ ORDER BY APPT_PAPMI_DR->PAPMI_No
             // Create and fill DataTable with SQL query
             DataTable dt = new DataTable();
             dt.Columns.Add("URN", typeof(Int32));
-            dt.Columns.Add("DeceasedDate", typeof(String));
-            dt.Columns.Add("PatientSurname", typeof(String));
-            dt.Columns.Add("PatientFirstName", typeof(String));
-            dt.Columns.Add("Gender", typeof(String));
-            dt.Columns.Add("PaitentDOB", typeof(String));
-            dt.Columns.Add("AddressFirstLine", typeof(String));
-            dt.Columns.Add("AddressSecondLine", typeof(String));
-            dt.Columns.Add("PostCode", typeof(String));
+            //dt.Columns.Add("DeceasedDate", typeof(String));
+            //dt.Columns.Add("PatientSurname", typeof(String));
+            //dt.Columns.Add("PatientFirstName", typeof(String));
+            //dt.Columns.Add("Gender", typeof(String));
+            //dt.Columns.Add("PaitentDOB", typeof(String));
+            //dt.Columns.Add("AddressFirstLine", typeof(String));
+            //dt.Columns.Add("AddressSecondLine", typeof(String));
+            //dt.Columns.Add("PostCode", typeof(String));
             dt.Columns.Add("EpisodeNumber", typeof(String));
-            dt.Columns.Add("EpisodeCareProvider", typeof(String));
+            //dt.Columns.Add("EpisodeCareProvider", typeof(String));
             dt.Columns.Add("EpisodeSpecialty", typeof(String));
-            dt.Columns.Add("EpisodeVisitStatus", typeof(String));
-            dt.Columns.Add("EpisodeReferralStatus", typeof(String));
+            //dt.Columns.Add("EpisodeVisitStatus", typeof(String));
+            //dt.Columns.Add("EpisodeReferralStatus", typeof(String));
             dt.Columns.Add("AppointmentDate", typeof(String));
             dt.Columns.Add("AppointmentTime", typeof(String));
-            dt.Columns.Add("AppointmentCareProvider", typeof(String));
+            //dt.Columns.Add("AppointmentCareProvider", typeof(String));
             dt.Columns.Add("AppointmentLocationDescription", typeof(String));
-            dt.Columns.Add("CareProviderGroup", typeof(String));
-            dt.Columns.Add("AppointmentReferralStatus", typeof(String));
+            ///dt.Columns.Add("CareProviderGroup", typeof(String));
+            //dt.Columns.Add("AppointmentReferralStatus", typeof(String));
             dt.Columns.Add("AppointmentOutcome", typeof(String));
 
             using (SqlDataAdapter adapter = new SqlDataAdapter(cmd))
@@ -112,7 +112,7 @@ ORDER BY APPT_PAPMI_DR->PAPMI_No
             Console.WriteLine($"SQL took {SqlTime.Minutes} minuites and {SqlTime.Seconds} seconds to return query");
             watch.Restart();
             Console.WriteLine("Working...");
-            Console.WriteLine();
+            //Console.WriteLine();
 
             //Create DataView from DataTable for sorting
             DataView dv = dt.DefaultView;
@@ -159,7 +159,6 @@ ORDER BY APPT_PAPMI_DR->PAPMI_No
                         //Console.WriteLine(comboString);
                         appCombos.Add(comboString);
 
-
                         
                         if (!appDict.ContainsKey(dictKey))
                         {
@@ -174,23 +173,22 @@ ORDER BY APPT_PAPMI_DR->PAPMI_No
                         }
 
                     }
-                    Console.WriteLine();
+                    //Console.WriteLine();
                 }
-
                 appList.Clear();
             }
 
-            foreach(var item in appDict)
-            {
-                Console.WriteLine(item.Key);
+            //foreach(var item in appDict)
+            //{
+            //    Console.WriteLine(item.Key);
                 
-                foreach(var a in item.Value)
-                {
+            //    foreach(var a in item.Value)
+            //    {
 
-                    Console.WriteLine(a);
-                }
-                Console.WriteLine();
-            }
+            //        Console.WriteLine(a);
+            //    }
+            //    Console.WriteLine();
+            //}
 
 
             List<string> uniques = new List<string>();
@@ -202,20 +200,22 @@ ORDER BY APPT_PAPMI_DR->PAPMI_No
              
                 if (grp.Count() == 1)
                 {
-                    Console.WriteLine("{0} {1}", grp.Key, grp.Count());
+                    //Console.WriteLine("{0} {1}", grp.Key, grp.Count());
                     uniques.Add(grp.Key.ToString());
 
                 }
                 
             }
 
-            Console.WriteLine();
 
             uniques = uniques.OrderBy(q => q).ToList();
+            List<string> epSpList = new List<string>();
+           
+
             foreach (var u in uniques)
             {
                 if (!u.Contains("MSG Nurse Clinic"))
-                
+
                 {
                     foreach (var item in appDict)
 
@@ -223,13 +223,66 @@ ORDER BY APPT_PAPMI_DR->PAPMI_No
                         if (appDict[item.Key].Contains(u))
 
                         {
-                            Console.WriteLine("{0} : {1}", item.Key.ToString(), u);
+                            var epS = "";
+                            foreach (DataRow dr in sortedDT.Rows)
+                            {
+                                if(dr["EpisodeNumber"].ToString() == item.Key)
+                                {
+
+                                     epS = dr["EpisodeSpecialty"].ToString();
+
+                                }
+
+                            }
+
+
+                            var episodeString = String.Format("{0} ---> {1} : {2}", epS, u, item.Key.ToString());
+                            epSpList.Add(episodeString);
+
+                            //Console.WriteLine("{0} : {1} ---> {2}", item.Key.ToString(), epS, u);                            
 
                         }
                     }
                 }
+                epSpList = epSpList.OrderBy(q => q).ToList();
 
+                foreach(var e in epSpList)
+                {
+
+                    var epSpecialityAppLocation = e.Split(':')[0].Trim();
+                    var episodeNumber = e.Split(':')[1].Trim();
+                    
+                    Console.WriteLine("{0} : {1}", episodeNumber, epSpecialityAppLocation);
+                }
             }
+
+
+
+
+
+            //Console.WriteLine();
+            //Console.WriteLine();
+            //Console.WriteLine("Unique Appointment Location Descriptions");
+            //Console.WriteLine("----------------------------------------");
+
+            //foreach (var u in uniques)
+            //{
+            //    if (!u.Contains("MSG Nurse Clinic"))
+
+            //    {
+            //        foreach (var item in appDict)
+
+            //        {
+            //            if (appDict[item.Key].Contains(u))
+
+            //            {
+            //                Console.WriteLine("{0} : {1}", item.Key.ToString(), u);
+
+            //            }
+            //        }
+            //    }
+
+            //}
 
         }
     }
