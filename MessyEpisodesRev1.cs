@@ -39,7 +39,7 @@ namespace MessyEpisodes
             string SQL = @"
         SELECT * 
 FROM OPENQUERY(HSSDPRD, 
-' SELECT TOP 10000
+' SELECT 
 	APPT_PAPMI_DR->PAPMI_No as URN
     , APPT_PAPMI_DR->PAPMI_Deceased_Date as DeceasedDate
 	, APPT_PAPMI_DR->PAPMI_Name as PatientSurname
@@ -154,7 +154,7 @@ ORDER BY APPT_PAPMI_DR->PAPMI_No
                     
                     foreach (var c in combinations)
                     {
-                        var comboString = String.Format("{0} {1}", c[0], c[1]);
+                        var comboString = String.Format("{0} + {1}", c[0], c[1]);
 
                         //Console.WriteLine(comboString);
                         appCombos.Add(comboString);
@@ -162,7 +162,7 @@ ORDER BY APPT_PAPMI_DR->PAPMI_No
 
                         
                         if (!appDict.ContainsKey(dictKey))
-                    {
+                        {
  
                             appDict.Add(dictKey, new List<string>());
                             appDict[dictKey].Add(comboString);
@@ -200,7 +200,6 @@ ORDER BY APPT_PAPMI_DR->PAPMI_No
             foreach (var grp in g)
             {
              
-
                 if (grp.Count() == 1)
                 {
                     Console.WriteLine("{0} {1}", grp.Key, grp.Count());
@@ -210,19 +209,26 @@ ORDER BY APPT_PAPMI_DR->PAPMI_No
                 
             }
 
+            Console.WriteLine();
+
+            uniques = uniques.OrderBy(q => q).ToList();
             foreach (var u in uniques)
             {
-                foreach(var item in appDict)
-
+                if (!u.Contains("MSG Nurse Clinic"))
+                
                 {
-
-                    if (appDict[item.Key].Contains(u))
+                    foreach (var item in appDict)
 
                     {
-                        Console.WriteLine("{0} : {1}", item.Key.ToString(), u);
+                        if (appDict[item.Key].Contains(u))
 
+                        {
+                            Console.WriteLine("{0} : {1}", item.Key.ToString(), u);
+
+                        }
                     }
                 }
+
             }
 
         }
