@@ -39,7 +39,7 @@ namespace MessyEpisodes
             string SQL = @"
         SELECT * 
 FROM OPENQUERY(HSSDPRD, 
-' SELECT TOP 10000
+' SELECT 
 	APPT_PAPMI_DR->PAPMI_No as URN
     --, APPT_PAPMI_DR->PAPMI_Deceased_Date as DeceasedDate
 	--, APPT_PAPMI_DR->PAPMI_Name as PatientSurname
@@ -68,7 +68,7 @@ AND APPT_Adm_DR->PAADM_VisitStatus  = ''A''
 AND APPT_Adm_DR->PAADM_Type = ''O''
 --AND APPT_Outcome_DR->OUTC_Desc <> ''NULL''
 --AND APPT_PAPMI_DR->PAPMI_No = 107688
---AND APPT_Adm_DR->PAADM_ADMNo IN (''O0000201594'',''O0000442859'', ''O0000442900'') 
+--AND APPT_Adm_DR->PAADM_ADMNo IN (''O0000201594'',''O0000566451'') 
 ORDER BY APPT_PAPMI_DR->PAPMI_No
 ')";
 
@@ -202,7 +202,6 @@ ORDER BY APPT_PAPMI_DR->PAPMI_No
                 {
                     //Console.WriteLine("{0} {1}", grp.Key, grp.Count());
                     uniques.Add(grp.Key.ToString());
-
                 }
                 
             }
@@ -236,7 +235,8 @@ ORDER BY APPT_PAPMI_DR->PAPMI_No
                             }
 
 
-                            var episodeString = String.Format("{0} ---> {1} : {2}", epS, u, item.Key.ToString());
+                            var episodeString = String.Format("{0} : {1} : {2}", epS, u, item.Key.ToString());
+                            //Console.Write(episodeString);
                             epSpList.Add(episodeString);
 
                             //Console.WriteLine("{0} : {1} ---> {2}", item.Key.ToString(), epS, u);                            
@@ -244,46 +244,28 @@ ORDER BY APPT_PAPMI_DR->PAPMI_No
                         }
                     }
                 }
-                epSpList = epSpList.OrderBy(q => q).ToList();
 
-                foreach(var e in epSpList)
-                {
+            }
+            epSpList = epSpList.OrderBy(q => q).ToList();
 
-                    var epSpecialityAppLocation = e.Split(':')[0].Trim();
-                    var episodeNumber = e.Split(':')[1].Trim();
-                    
-                    Console.WriteLine("{0} : {1}", episodeNumber, epSpecialityAppLocation);
-                }
+
+            Console.WriteLine("-------------------------------------------------------------------------------------------------------");
+            Console.WriteLine("EpisodeNumber | EpisodeSpeciality                                  | AppointmentLocations");
+            Console.WriteLine("-------------------------------------------------------------------------------------------------------");
+
+            foreach (var e in epSpList)
+            {
+
+                var episodeNumber = e.Split(':')[2].Trim();
+                var appLocation = e.Split(':')[1].Trim();
+                var epSpeciality = e.Split(':')[0].Trim();
+
+               Console.WriteLine(String.Format("{0,-13} | {1,-50} | {2,5}", episodeNumber, epSpeciality, appLocation));
             }
 
+            
 
-
-
-
-            //Console.WriteLine();
-            //Console.WriteLine();
-            //Console.WriteLine("Unique Appointment Location Descriptions");
-            //Console.WriteLine("----------------------------------------");
-
-            //foreach (var u in uniques)
-            //{
-            //    if (!u.Contains("MSG Nurse Clinic"))
-
-            //    {
-            //        foreach (var item in appDict)
-
-            //        {
-            //            if (appDict[item.Key].Contains(u))
-
-            //            {
-            //                Console.WriteLine("{0} : {1}", item.Key.ToString(), u);
-
-            //            }
-            //        }
-            //    }
-
-            //}
-
+          
         }
     }
 }
