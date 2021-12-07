@@ -1,4 +1,6 @@
 using Combinatorics.Collections;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -39,7 +41,7 @@ namespace MessyEpisodes
             string SQL = @"
         SELECT * 
 FROM OPENQUERY(HSSDPRD, 
-' SELECT 
+' SELECT TOP 1000
 	APPT_PAPMI_DR->PAPMI_No as URN
     --, APPT_PAPMI_DR->PAPMI_Deceased_Date as DeceasedDate
 	--, APPT_PAPMI_DR->PAPMI_Name as PatientSurname
@@ -249,9 +251,16 @@ ORDER BY APPT_PAPMI_DR->PAPMI_No
             epSpList = epSpList.OrderBy(q => q).ToList();
 
 
-            Console.WriteLine("-------------------------------------------------------------------------------------------------------");
-            Console.WriteLine("EpisodeNumber | EpisodeSpeciality                                  | AppointmentLocations");
-            Console.WriteLine("-------------------------------------------------------------------------------------------------------");
+            Console.WriteLine("-------------------------------------------------------------------------------------------------------------------------------");
+            Console.WriteLine("EpisodeNumber | EpisodeSpeciality                                  | AppointmentLocations (unique combinations within episodes)");
+            Console.WriteLine("-------------------------------------------------------------------------------------------------------------------------------");
+
+
+
+            DataTable results = new DataTable();
+            results.Columns.Add("EpisodeNumber", typeof(String));
+            results.Columns.Add("EpisodeSpecialty", typeof(String));
+            results.Columns.Add("AppointmentLocations", typeof(String));
 
             foreach (var e in epSpList)
             {
@@ -261,11 +270,40 @@ ORDER BY APPT_PAPMI_DR->PAPMI_No
                 var epSpeciality = e.Split(':')[0].Trim();
 
                Console.WriteLine(String.Format("{0,-13} | {1,-50} | {2,5}", episodeNumber, epSpeciality, appLocation));
+
+
+
+                results.Rows.Add(episodeNumber, epSpeciality, appLocation);
+
+
             }
 
-            
 
-          
+
+            var xlsxFile = @"M:\MSG Open Episodes\MessyEpisodes\MessyEpisodes_test.xlsx";
+
+            if (File.Exists(xlsxFile))
+            {
+                File.Delete(xlsxFile);
+            }
+
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            FileInfo fileInfo = new FileInfo(xlsxFile);
+            using (ExcelPackage package = new ExcelPackage(fileInfo))
+            {
+                ExcelWorksheet ws = package.Workbook.Worksheets.Add("Results");
+                ws.Cells["A1"].LoadFromDataTable(results, true);
+                ws.Cells.AutoFitColumns();
+                ws.Cells.Style.HorizontalAlignment = ExcelHorizontalAlignment.Left;
+                ws.View.FreezePanes(2, 1);
+                package.Save();
+                package.Dispose();
+            }
+
+
+
+
+
         }
     }
 }
